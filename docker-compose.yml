@@ -1,0 +1,23 @@
+services:
+  uploadfile-api:
+    build: .
+    # Hoặc dùng image đã build sẵn nếu push lên registry:
+    # image: uploadfile-api:latest
+    container_name: uploadfile-api
+    restart: unless-stopped
+    ports:
+      # host:container  ->  đổi 8080 thành port bạn muốn mở trên NAS
+      - "8080:3000"
+    environment:
+      PORT: "3000"
+      UPLOAD_DIR: "/data/uploads"
+      # URL public để dựng link trả về. Trỏ đúng domain + port bạn map ở trên.
+      PUBLIC_BASE_URL: "https://yumest.synology.me:8080"
+      # ĐỔI thành chuỗi bí mật của bạn
+      API_KEY: "doi-thanh-key-bi-mat-cua-ban"
+      MAX_FILE_MB: "50"
+    volumes:
+      # Mount thư mục trên NAS để file không mất khi container bị xóa/cập nhật.
+      # Đổi đường dẫn trái thành shared folder thật trên DSM, ví dụ:
+      #   /volume1/docker/uploadfile/uploads:/data/uploads
+      - ./uploads:/data/uploads
